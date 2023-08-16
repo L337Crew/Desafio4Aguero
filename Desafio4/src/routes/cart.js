@@ -1,9 +1,16 @@
-const express = require('express');
+import express from 'express';
+import cartController from '../controllers/cartController'; // Cambio aquí
+
 const router = express.Router();
-const cartsController = require('../controllers/cartController');
 
-router.post('/', cartsController.createCart);
-router.get('/:cid', cartsController.getCartProducts);
-router.post('/:cid/product/:pid', cartsController.addProductToCart);
+router.post('/', cartController.createCart); // Cambio aquí
+router.get('/:cid', cartController.getCartProducts); // Cambio aquí
+router.post('/:cid/product/:pid', cartController.addProductToCart); // Cambio aquí
 
-module.exports = router;
+// Manejo de errores
+router.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Error interno del servidor' });
+});
+
+export default router;

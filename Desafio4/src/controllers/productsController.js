@@ -1,4 +1,4 @@
-const fs = require('fs');
+import { fs, generateUniqueId } from './commonModules.js';
 
 function getProductsFromFile() {
   const data = fs.readFileSync('../productos.json');
@@ -10,12 +10,12 @@ function saveProductsToFile(products) {
   fs.writeFileSync('../productos.json', data);
 }
 
-function getAllProducts(req, res) {
+async function getAllProducts(req, res) {
   const products = getProductsFromFile();
   res.json(products);
 }
 
-function getProductById(req, res) {
+async function getProductById(req, res) {
   const pid = req.params.pid;
   const products = getProductsFromFile();
   const product = products.find((p) => p.id === pid);
@@ -26,8 +26,13 @@ function getProductById(req, res) {
   }
 }
 
-function addProduct(req, res) {
+async function addProduct(req, res) {
   const { title, description, code, price, status, stock, category, thumbnails } = req.body;
+
+  // Validación de datos
+  if (!title || !description || !code || !price || !stock || !category || !thumbnails) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+  }
 
   const newId = generateUniqueId();
 
@@ -50,7 +55,7 @@ function addProduct(req, res) {
   res.status(201).json({ message: 'Producto creado exitosamente', product: newProduct });
 }
 
-function updateProduct(req, res) {
+async function updateProduct(req, res) {
   const pid = req.params.pid;
   const updatedFields = req.body;
 
@@ -65,7 +70,7 @@ function updateProduct(req, res) {
   }
 }
 
-function deleteProduct(req, res) {
+async function deleteProduct(req, res) {
   const pid = req.params.pid;
   const products = getProductsFromFile();
   const productIndex = products.findIndex((p) => p.id === pid);
@@ -78,7 +83,7 @@ function deleteProduct(req, res) {
   }
 }
 
-module.exports = {
+export {
   getAllProducts,
   getProductById,
   addProduct,

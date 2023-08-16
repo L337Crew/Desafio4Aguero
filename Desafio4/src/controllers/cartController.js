@@ -1,5 +1,4 @@
-const fs = require('fs');
-const { v4: generateUniqueId } = require('uuid');
+import { fs, generateUniqueId } from './commonModules.js';
 
 function getCartFromFile() {
   const data = fs.readFileSync('../carrito.json');
@@ -13,6 +12,11 @@ function saveCartToFile(cart) {
 
 function createCart(req, res) {
   const { products } = req.body;
+
+  // Cambio 1: Validación de datos
+  if (!Array.isArray(products)) {
+    return res.status(400).json({ message: 'El campo "products" debe ser un arreglo' });
+  }
 
   const newId = generateUniqueId();
 
@@ -39,6 +43,12 @@ function getCartProducts(req, res) {
 function addProductToCart(req, res) {
   const cid = req.params.cid;
   const pid = req.params.pid;
+
+  // Cambio 2: Validación de datos
+  if (!cid || !pid) {
+    return res.status(400).json({ message: 'Se requiere cid y pid' });
+  }
+
   const cart = getCartFromFile();
 
   const existingProduct = cart.products.find((p) => p.product === pid);
@@ -53,8 +63,9 @@ function addProductToCart(req, res) {
   res.json({ message: 'Producto agregado al carrito exitosamente', cart });
 }
 
-module.exports = {
+export {
   createCart,
   getCartProducts,
   addProductToCart
 };
+
