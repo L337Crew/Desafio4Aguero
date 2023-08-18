@@ -3,7 +3,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const productsFilePath = path.join(__dirname, '../data/productos.json');
+const productsFilePath = path.join(new URL('../data/productos.json', import.meta.url).pathname);
+
 
 function getAllProducts() {
   const data = fs.readFileSync(productsFilePath, 'utf8');
