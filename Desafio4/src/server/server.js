@@ -1,6 +1,6 @@
 import express from 'express';
 import http from 'http';
-import exphbs from 'express-handlebars';
+import handlebars from 'express-handlebars';
 import helmet from 'helmet';
 import { connectToDB } from '../dao/db.js'; // Importar la función de conexión
 import productsRouter from '../routes/products.js';
@@ -15,7 +15,8 @@ const io = new Server(httpServer); // Crear instancia de Server
 app.use(helmet());
 app.use(express.json());
 
-app.engine('handlebars', exphbs());
+app.engine('handlebars', handlebars.engine());
+
 app.set('view engine', 'handlebars');
 
 connectToDB();
