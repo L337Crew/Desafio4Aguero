@@ -1,16 +1,7 @@
-import { fs, generateUniqueId } from './commonModules.js';
+import { generateUniqueId } from '../commonModules/commonModules.js';
+import Cart from '../dao/models/cartModel.js';
 
-function getCartFromFile() {
-  const data = fs.readFileSync('../carrito.json');
-  return JSON.parse(data);
-}
-
-function saveCartToFile(cart) {
-  const data = JSON.stringify(cart, null, 2);
-  fs.writeFileSync('../carrito.json', data);
-}
-
-function createCart(req, res) {
+async function createCart(req, res) {
   const { products } = req.body;
 
   // Cambio 1: Validación de datos
@@ -18,29 +9,35 @@ function createCart(req, res) {
     return res.status(400).json({ message: 'El campo "products" debe ser un arreglo' });
   }
 
-  const newId = generateUniqueId();
+  try {
+    const newId = generateUniqueId();
 
-  const newCart = {
-    id: newId,
-    products: products || []
-  };
+    const newCart = await Cart.create({  // Cambio amarillo aquí
+      _id: newId,
+      products: products || []
+    });
 
-  saveCartToFile(newCart);
-
-  res.status(201).json({ message: 'Carrito creado exitosamente', cart: newCart });
-}
-
-function getCartProducts(req, res) {
-  const cid = req.params.cid;
-  const cart = getCartFromFile();
-  if (cart.id === cid) {
-    res.json(cart.products);
-  } else {
-    res.status(404).json({ message: 'Carrito no encontrado' });
+    res.status(201).json({ message: 'Carrito creado exitosamente', cart: newCart });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear el carrito' });
   }
 }
 
-function addProductToCart(req, res) {
+async function getCartProducts(req, res) {
+  const cid = req.params.cid;
+  try {
+    const cart = await Cart.findById(cid); // Cambio amarillo aquí
+    if (cart) {
+      res.json(cart.products);
+    } else {
+      res.status(404).json({ message: 'Carrito no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los productos del carrito' });
+  }
+}
+
+async function addProductToCart(req, res) {
   const cid = req.params.cid;
   const pid = req.params.pid;
 
@@ -49,18 +46,22 @@ function addProductToCart(req, res) {
     return res.status(400).json({ message: 'Se requiere cid y pid' });
   }
 
-  const cart = getCartFromFile();
+  try {
+    const cart = await Cart.findById(cid); // Cambio amarillo aquí
 
-  const existingProduct = cart.products.find((p) => p.product === pid);
-  if (existingProduct) {
-    existingProduct.quantity += 1;
-  } else {
-    cart.products.push({ product: pid, quantity: 1 });
+    const existingProduct = cart.products.find((p) => p.product === pid);
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.products.push({ product: pid, quantity: 1 });
+    }
+
+    await cart.save();
+
+    res.json({ message: 'Producto agregado al carrito exitosamente', cart });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al agregar el producto al carrito' });
   }
-
-  saveCartToFile(cart);
-
-  res.json({ message: 'Producto agregado al carrito exitosamente', cart });
 }
 
 export {
@@ -68,4 +69,3 @@ export {
   getCartProducts,
   addProductToCart
 };
-

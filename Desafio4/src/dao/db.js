@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const dbURI = 'mongodb+srv://kyoz3:zabuza22@cluster0.www1llq.mongodb.net/ecommerceDB?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://kyoz3:zabuza22@ecommerce-cluster.hmi72zs.mongodb.net/?retryWrites=true&w=majority';
 
 const connectToDB = async () => {
   try {

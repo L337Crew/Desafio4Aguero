@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import exphbs from 'express-handlebars';
 import helmet from 'helmet';
-import { connectToDB } from '../dao/db'; // Importar la función de conexión
+import { connectToDB } from '../dao/db.js'; // Importar la función de conexión
 import productsRouter from '../routes/products.js';
 import cartsRouter from '../routes/cart.js';
 

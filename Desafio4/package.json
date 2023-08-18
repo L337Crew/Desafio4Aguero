@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,8 @@
     "express": "^4.18.2",
     "express-handlebars": "^7.0.7",
     "helmet": "^7.0.0",
-    "mongoose": "^7.4.2"
+    "mongoose": "^7.4.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

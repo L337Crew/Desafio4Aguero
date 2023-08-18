@@ -1,30 +1,15 @@
-import { fs, generateUniqueId } from './commonModules.js';
+import { generateUniqueId } from '../commonModules/commonModules.js'; // Solo importamos generateUniqueId
 
-function getProductsFromFile() {
-  const data = fs.readFileSync('../productos.json');
-  return JSON.parse(data);
-}
+// Importamos las funciones del modelo
+import {
+  getAllProducts,
+  getProductById,
+  addProduct as addProductToModel,
+  updateProduct as updateProductInModel,
+  deleteProduct as deleteProductFromModel
+} from '../dao/models/productModel.js';
 
-function saveProductsToFile(products) {
-  const data = JSON.stringify(products, null, 2);
-  fs.writeFileSync('../productos.json', data);
-}
-
-async function getAllProducts(req, res) {
-  const products = getProductsFromFile();
-  res.json(products);
-}
-
-async function getProductById(req, res) {
-  const pid = req.params.pid;
-  const products = getProductsFromFile();
-  const product = products.find((p) => p.id === pid);
-  if (product) {
-    res.json(product);
-  } else {
-    res.status(404).json({ message: 'Producto no encontrado' });
-  }
-}
+// Resto de las funciones del controlador
 
 async function addProduct(req, res) {
   const { title, description, code, price, status, stock, category, thumbnails } = req.body;
@@ -48,40 +33,46 @@ async function addProduct(req, res) {
     thumbnails
   };
 
-  const products = getProductsFromFile();
-  products.push(newProduct);
-  saveProductsToFile(products);
-
-  res.status(201).json({ message: 'Producto creado exitosamente', product: newProduct });
+  try {
+    await addProductToModel(newProduct); // Usamos la función del modelo para agregar el producto
+    res.status(201).json({ message: 'Producto creado exitosamente', product: newProduct });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear el producto' });
+  }
 }
 
 async function updateProduct(req, res) {
   const pid = req.params.pid;
   const updatedFields = req.body;
 
-  const products = getProductsFromFile();
-  const product = products.find((p) => p.id === pid);
-  if (product) {
-    Object.assign(product, updatedFields);
-    saveProductsToFile(products);
-    res.json({ message: 'Producto actualizado exitosamente', product });
-  } else {
-    res.status(404).json({ message: 'Producto no encontrado' });
+  try {
+    const updatedProduct = await updateProductInModel(pid, updatedFields); // Usamos la función del modelo para actualizar el producto
+    if (updatedProduct) {
+      res.json({ message: 'Producto actualizado exitosamente', product: updatedProduct });
+    } else {
+      res.status(404).json({ message: 'Producto no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar el producto' });
   }
 }
 
 async function deleteProduct(req, res) {
   const pid = req.params.pid;
-  const products = getProductsFromFile();
-  const productIndex = products.findIndex((p) => p.id === pid);
-  if (productIndex !== -1) {
-    products.splice(productIndex, 1);
-    saveProductsToFile(products);
-    res.json({ message: 'Producto eliminado exitosamente' });
-  } else {
-    res.status(404).json({ message: 'Producto no encontrado' });
+
+  try {
+    const deletedProduct = await deleteProductFromModel(pid); // Usamos la función del modelo para eliminar el producto
+    if (deletedProduct) {
+      res.json({ message: 'Producto eliminado exitosamente' });
+    } else {
+      res.status(404).json({ message: 'Producto no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar el producto' });
   }
 }
+
+// Resto de las funciones del controlador
 
 export {
   getAllProducts,
