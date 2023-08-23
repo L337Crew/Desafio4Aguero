@@ -1,47 +1,31 @@
-// productModel.js
+import mongoose from 'mongoose';
 
-import fs from 'fs';
-import path from 'path';
+const productSchema = new mongoose.Schema({
+  name: String,
+  price: Number,
+  // Otros campos que necesites
+});
 
-const productsFilePath = path.join(new URL('../data/productos.json', import.meta.url).pathname);
+const Product = mongoose.model('Product', productSchema);
 
-
-function getAllProducts() {
-  const data = fs.readFileSync(productsFilePath, 'utf8');
-  return JSON.parse(data);
+async function getAllProducts() {
+  return await Product.find();
 }
 
-function getProductById(productId) {
-  const products = getAllProducts();
-  return products.find((p) => p.id === productId);
+async function getProductById(productId) {
+  return await Product.findById(productId);
 }
 
-function addProduct(newProduct) {
-  const products = getAllProducts();
-  products.push(newProduct);
-  saveProductsToFile(products);
+async function addProduct(newProduct) {
+  return await Product.create(newProduct);
 }
 
-function updateProduct(productId, updatedFields) {
-  const products = getAllProducts();
-  const product = products.find((p) => p.id === productId);
-  if (product) {
-    Object.assign(product, updatedFields);
-    saveProductsToFile(products);
-  }
+async function updateProduct(productId, updatedFields) {
+  return await Product.updateOne({ _id: productId }, { $set: updatedFields });
 }
 
-function deleteProduct(productId) {
-  const products = getAllProducts();
-  const productIndex = products.findIndex((p) => p.id === productId);
-  if (productIndex !== -1) {
-    products.splice(productIndex, 1);
-    saveProductsToFile(products);
-  }
-}
-
-function saveProductsToFile(products) {
-  fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2));
+async function deleteProduct(productId) {
+  return await Product.deleteOne({ _id: productId });
 }
 
 export {

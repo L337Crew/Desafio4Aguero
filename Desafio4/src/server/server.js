@@ -3,6 +3,8 @@ import http from 'http';
 import handlebars from 'express-handlebars';
 import helmet from 'helmet';
 import { connectToDB } from '../dao/db.js'; // Importar la función de conexión
+import { __dirname } from './utils.js';
+import path from 'path';
 import productsRouter from '../routes/products.js';
 import cartsRouter from '../routes/cart.js';
 import { Server } from 'socket.io'; // Importar Server desde socket.io
