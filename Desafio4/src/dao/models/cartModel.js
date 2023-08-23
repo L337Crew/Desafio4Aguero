@@ -5,8 +5,11 @@ const cartSchema = new mongoose.Schema({
   userId: String,
   products: [
     {
-      productId: String,
-      quantity: Number,
+      product: {
+        type: mongoose.Schema.Types.ObjectId, // Referencia al ID del producto usando el tipo ObjectId
+        ref: 'Product', // Referencia a la colección 'Product'
+      },
+      quantity: Number, // Cantidad del producto en el carrito
     },
   ],
 });

@@ -25,6 +25,7 @@ connectToDB();
 
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use(viewRouter);
 
 app.get('/', async (req, res, next) => {
   try {
