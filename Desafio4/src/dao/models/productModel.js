@@ -1,14 +1,38 @@
 import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
-      title: String, // Título del producto (cadena de texto)
-      description: String, // Descripción del producto (cadena de texto)
-      price: Number, // Precio del producto (número)
-      thumbnails: String, // Enlace a la imagen del producto (cadena de texto)
-      code: String, // Código único del producto (cadena de texto)
-      stock: Number, // Cantidad en inventario del producto (número)
-      status: Boolean, // Estado del producto (activo/inactivo)
-      category: String,  // Categoría del producto (cadena de texto)
+      title: {
+        type: String,
+        required: true
+      }, // Título del producto (cadena de texto)
+      description: {
+        type: String,
+        required: true
+      }, // Descripción del producto (cadena de texto)
+      price: {
+        type: Number,
+        required: true
+      }, // Precio del producto (número)
+      thumbnails: {
+        type: String,
+        required: true
+      }, // Enlace a la imagen del producto (cadena de texto)
+      code: {
+        type: String,
+        required: true
+      }, // Código único del producto (cadena de texto)
+      stock: {
+        type: Number,
+        required: true
+      }, // Cantidad en inventario del producto (número)
+      status: {
+        type: Boolean,
+        required: true
+      }, // Estado del producto (activo/inactivo)
+      category: {
+        type: String,
+        required: true
+      }  // Categoría del producto (cadena de texto)
   // Otros campos que necesites
 });
 
