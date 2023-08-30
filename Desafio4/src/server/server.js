@@ -1,5 +1,4 @@
 import express from 'express';
-import http from 'http';
 import handlebars from 'express-handlebars';
 import helmet from 'helmet';
 import { connectToDB } from '../dao/db.js'; // Importar la función de conexión
@@ -9,19 +8,40 @@ import productsRouter from '../routes/products.js';
 import cartsRouter from '../routes/cart.js';
 import { Server } from 'socket.io'; // Importar Server desde socket.io
 import Message from '../dao/models/messageModel.js'; // Importar el modelo de mensaje
-import viewsRouter from './viewsrouter.js';
+import viewsRouter from '../routes/viewsRouter.js';
 
 const app = express();
 const port = 8080;
-const httpServer = http.createServer(app);
+const httpServer = app.listen(port,()=>console.log(`Server listening on port ${port}`));  
 const io = new Server(httpServer); // Crear instancia de Server
+
+let messages=[];  
+io.on("connection",(socket)=>{
+  console.log("nuevo cliente conectado");
+
+  socket.on("authenticated",async(msg)=>{
+      const messages = await chatModel.find();
+      socket.emit("messageHistory", messages);
+      socket.broadcast.emit("newUser", msg);
+  });
+
+  //recibir el mensaje del cliente
+  socket.on("message",async(data)=>{
+      console.log("data", data);
+      const messageCreated = await chatModel.create(data);
+      const messages = await chatModel.find();
+      //cada vez que recibamos este mensaje, enviamos todos los mensajes actualizados a todos los clientes conectados
+      io.emit("messageHistory", messages);
+  })
+});
 
 app.use(helmet());
 app.use(express.json());
+app.use(express.static(path.join(__dirname,"/public")));
 
 app.engine('handlebars', handlebars.engine());
-
 app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, "/views"));
 
 connectToDB();
 
@@ -92,6 +112,3 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send(err.message || 'Hubo un error en el servidor');
 });
 
-httpServer.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});

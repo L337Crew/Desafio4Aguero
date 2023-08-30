@@ -31,6 +31,7 @@ const productSchema = new mongoose.Schema({
       }, // Estado del producto (activo/inactivo)
       category: {
         type: String,
+        enum: ["", ""],
         required: true
       }  // Categoría del producto (cadena de texto)
   // Otros campos que necesites
