@@ -12,3 +12,4 @@ const connectToDB = async () => {
 };
 
 export { connectToDB }; // Cambio en la exportación
+  

@@ -7,7 +7,7 @@ import path from 'path';
 import productsRouter from '../routes/products.js';
 import cartsRouter from '../routes/cart.js';
 import { Server } from 'socket.io'; // Importar Server desde socket.io
-import Message from '../dao/models/messageModel.js'; // Importar el modelo de mensaje
+import Message from '../dao/models/messageModel'; // Importar el modelo de mensaje
 import viewsRouter from '../routes/viewsRouter.js';
 
 const app = express();

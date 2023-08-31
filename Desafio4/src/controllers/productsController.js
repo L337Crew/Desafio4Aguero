@@ -1,4 +1,4 @@
-import { generateUniqueId } from '../commonModules/commonModules.js'; // Solo importamos generateUniqueId
+import { generateUniqueId } from '../commonModules/commonModules'; // Solo importamos generateUniqueId
 
 // Importamos las funciones del modelo
 import {

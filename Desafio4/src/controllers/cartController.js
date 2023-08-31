@@ -1,4 +1,4 @@
-import { generateUniqueId } from '../commonModules/commonModules.js';
+import { generateUniqueId } from '../commonModules/commonModules';
 import Cart from '../dao/models/cartModel.js';
 
 const cartController = {
